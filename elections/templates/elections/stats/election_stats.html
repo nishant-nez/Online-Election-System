@@ -1,0 +1,115 @@
+{% extends "dashboard/base.html" %}
+
+
+{% block content %}
+
+<div class="container mx-auto">
+    <div class="my-10 flex flex-col">
+        <div class="text-3xl text-[#263238] font-bold">
+            {{ election.title }}
+        </div>
+
+        <section class="grid gap-6 my-6 md:grid-cols-3 w-full">
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Registered Candidates</dt>
+                    <dd class="text-5xl font-light md:text-7xl">{{ candidates|length }}</dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-green-500">
+                        <span>{{ male_count }} Male, {{ female_count }} Female</span>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Votes</dt>
+                    <dd class="text-5xl font-light md:text-7xl">{{ votes }}</dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-green-500">
+                        <span>{{ votes }} Total Votes</span>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Time left</dt>
+                    <dd id="countdown" class="text-5xl font-light md:text-5xl pt-2"></dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-red-500 pt-4">
+                        <span>Ends on {{ election.end_date|date:"d F Y" }}</span>
+                    </dd>
+                </dl>
+            </div>
+        </section>
+
+        <div class="w-full gap-8 mt-5">
+            <canvas id="candidate_bar" class="bg-[#fdfdfd] rounded-lg shadow-lg p-6 max-h-[76vh]"></canvas>
+        </div>
+        <div class="w-full gap-8 mt-5">
+            <canvas id="votes_line" class="bg-[#fdfdfd] rounded-lg shadow-lg p-6 max-h-[76vh]"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var countDownDate = new Date("{{ election.end_date|date:'M d, Y H:i:s' }}").getTime();
+
+    var x = setInterval(function () {
+        var now = new Date().getTime();
+        var distance = countDownDate - now;
+
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = days + " days " + hours + " hours";
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "Election Expired";
+        }
+    }, 1000);
+
+    // bar chart
+    const ctx = document.getElementById('candidate_bar');
+    var bar_chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: JSON.parse("{{ candidate_names|safe }}".replace(/'/g, '"')),
+            datasets: [{
+                label: 'votes gained by candidate',
+                data: JSON.parse("{{ candidate_votes|safe }}"),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                // maintai nAspectRatio: false,
+            }
+        }
+    });
+
+    // line chart
+    const ltx = document.getElementById('votes_line');
+    var bar_chart = new Chart(ltx, {
+        type: 'line',
+        data: {
+            labels: JSON.parse("{{ labels|safe }}".replace(/'/g, '"')),
+            datasets: [{
+                label: 'votes received for past 7 days',
+                data: JSON.parse("{{ vote_data|safe }}"),
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                borderWidth: 1
+            }]
+        },
+    });
+</script>
+
+
+{% endblock content %}

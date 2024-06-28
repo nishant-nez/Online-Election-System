@@ -1,0 +1,33 @@
+{% extends "authentication/base.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <fieldset class="container">
+        <div class="mb-6">
+            <h3 class="text-3xl font-extrabold">Sign in</h3>
+            <p class="text-sm mt-4">
+                Sign in to your account and explore a world of possibilities. Your journey begins here.
+            </p>
+            <!-- <a href="/admin" class="text-sm pt-2 text-blue-400">Admin Login</a> -->
+        </div>
+        {{ form|crispy }}
+        <div class="!mt-10">
+            <button type="submit"
+                class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
+                Sign In
+            </button>
+        </div>
+    </fieldset>
+    <div class="border-top pt-3">
+        <p class="text-sm !mt-3 text-center">
+            Don't have an account?
+            <a href={% url 'register' %} class="text-blue-600 hover:underline ml-1 whitespace-nowrap">
+                Sign Up
+            </a>
+        </p>
+    </div>
+</form>
+{% endblock content %}

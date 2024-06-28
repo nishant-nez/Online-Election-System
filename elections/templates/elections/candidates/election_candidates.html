@@ -1,0 +1,48 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="flex items-center justify-center mt-8">
+    <div class="flex items-center justify-between container">
+        <h2 class="text-3xl font-bold">Candidates for {{ election.title }}</h2>
+    </div>
+</div>
+
+<div class="flex items-center justify-center">
+    {% if candidates %}
+    <div class="container relative overflow-x-auto my-10">
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            {% for candidate in candidates %}
+            <div class="bg-gradient-to-b from-gray-300 flex flex-col items-center justify-between rounded-md border border-gray-400 shadow-lg bg-[#fdfdfd] p-8 max-w-[750px]"
+                style="min-width: 30rem; max-width: 40rem; justify-self: center;">
+                <img class="w-48 h-48 border-4 border-white rounded-full object-cover" src={{ candidate.image.url }}
+                    alt="user photo">
+                <div class="text-center">
+                    <a href="{% url 'candidate_detail' pk=candidate.pk %}">
+                        <p class="text-[#263238] text-3xl font-bold py-4">
+                            {{ candidate.name }}
+                        </p>
+                    </a>
+                    <a href="{% url 'election_detail' pk=candidate.election.id %}">
+                        <p class="text-[#5478f4] text-2xl font-bold">{{ candidate.election.title }}</p>
+                    </a>
+                    <div class="flex gap-2 justify-center p-4">
+                        <p class="text-[#263238] text-xl font-bold">{{ candidate.votes }}</p>
+                        <p class="text-[#263238] text-xl">votes</p>
+                    </div>
+                </div>
+                <a href="{% url 'candidate_detail' pk=candidate.pk %}"
+                    class="text-white border-[#5478f4] rounded-2xl text-lg py-2 px-2 text-center mb-2 w-full"
+                    style="background-color: #5478f4;">
+                    Details
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center text-center my-10">No Candidates for this election!</div>
+    {% endif %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,128 @@
+{% extends "dashboard/base.html" %}
+<!-- {% load crispy_forms_tags %} -->
+
+{% block content %}
+
+<div class="container mr-auto ml-auto">
+    {% if active_elections %}
+    <div>
+        <div class="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16">
+            <h2 class="text-3xl font-bold py-4">Active Elections</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-10">
+                {% for election in active_elections %}
+                <div class="rounded overflow-hidden shadow-lg hover:shadow-xl bg-[#fdfdfd]">
+                    <!-- {{election.image.url}} -->
+                    <div class="relative">
+                        <a href="{% url 'election_detail' pk=election.id %}" class="w-[100%]">
+                            <img src={{ election.image.url }} alt={{ election.title }} style="width: 100%;"
+                                class="cursor-pointer h-[250px] object-cover">
+                            <!-- <div
+                                class="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
+                            </div> -->
+                        </a>
+                        <!-- <a href="#!" class="flex items-center justify-center">
+                            <div
+                                class="absolute bottom-0 bg-indigo-600 px-4 py-2 text-white text-sm hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out">
+                                Photos
+                            </div>
+                        </a> -->
+
+                        <a href="{% url 'election_detail' pk=election.id %}">
+                            <div
+                                class="text-sm absolute top-0 right-0 bg-indigo-600 px-4 text-white rounded-full h-16 w-16 flex flex-col items-center justify-center mt-3 mr-3 hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out cursor-pointer">
+                                <span class="font-bold">{{ election.end_date|date:"d" }}</span>
+                                <small>{{ election.end_date|date:"F" }}</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <div class="px-6 py-4">
+                            <a href="{% url 'election_detail' pk=election.id %}"
+                                class="font-semibold text-lg inline-block hover:text-indigo-600 transition duration-500 ease-in-out cursor-pointer">
+                                {{ election.title }}
+                            </a>
+                            <p class="text-gray-500 text-sm">
+                                {{ election.description|truncatewords:10 }}
+                            </p>
+                        </div>
+                        <div class="px-6 py-4 pb-6 flex flex-row items-center">
+                            <a href="{% url 'election_candidates' pk=election.pk %}">
+                                <button type="button"
+                                    class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-900">
+                                    View Candidates
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if past_elections %}
+    <div>
+        <div class="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16">
+            <h2 class="text-3xl font-bold py-4">Past Elections</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-10">
+                {% for election in past_elections %}
+                <div class="rounded overflow-hidden shadow-lg hover:shadow-xl bg-[#fdfdfd]">
+                    <!-- {{election.image.url}} -->
+                    <div class="relative">
+                        <a href="{% url 'election_detail' pk=election.id %}">
+                            <img src={{ election.image.url }} alt={{ election.title }} style="width: 100%;"
+                                class="cursor-pointer h-[250px] object-cover">
+                            <!-- <div
+                                class="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
+                            </div> -->
+                        </a>
+                        <!-- <a href="#!" class="flex items-center justify-center">
+                            <div
+                                class="absolute bottom-0 bg-indigo-600 px-4 py-2 text-white text-sm hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out">
+                                Photos
+                            </div>
+                        </a> -->
+
+                        <a href="{% url 'election_detail' pk=election.id %}">
+                            <div
+                                class="text-sm absolute top-0 right-0 bg-indigo-600 px-4 text-white rounded-full h-16 w-16 flex flex-col items-center justify-center mt-3 mr-3 hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out cursor-pointer">
+                                <span class="font-bold">{{ election.end_date|date:"d" }}</span>
+                                <small>{{ election.end_date|date:"F" }}</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <div class="px-6 py-4">
+                            <a href="{% url 'election_detail' pk=election.id %}"
+                                class="font-semibold text-lg inline-block hover:text-indigo-600 transition duration-500 ease-in-out cursor-pointer">
+                                {{ election.title }}
+                            </a>
+                            <p class="text-gray-500 text-sm">
+                                {{ election.description|truncatewords:10 }}
+                            </p>
+                        </div>
+                        <div class="px-6 py-4 pb-6 flex flex-row items-center">
+                            <a href="{% url 'election_candidates' pk=election.pk %}">
+                                <button type="button"
+                                    class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-900">
+                                    View Candidates
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not active_elections and not past_elections %}
+    <div class="w-[100vw] h-[89vh] flex items-center justify-center">
+        <p class="text-xl font-bold">No elections yet...</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

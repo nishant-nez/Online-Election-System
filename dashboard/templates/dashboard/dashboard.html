@@ -1,0 +1,92 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container mx-auto">
+    <div class="my-10 flex flex-col items-center justify-center">
+        <div>
+            <span class="text-3xl text-[#263238]">Hello, </span>
+            <span class="text-3xl text-[#263238] font-bold">{{ request.user.first_name }}!</span>
+        </div>
+        <p class="text-xl text-gray-600 my-3">Welcome to Online Voting System.</p>
+    </div>
+
+    {% if ongoing_elections %}
+    <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-{% if ongoing_elections|length < 3 %}{{ ongoing_elections|length }}{% else %}3{% endif %} gap-8 px-6 pb-6">
+        {% for election in ongoing_elections %}
+        <div class="rounded-md border border-gray-400 shadow-lg bg-[#fdfdfd] p-8 flex flex-col justify-between w-[100%]"
+            style="justify-self: center;">
+            <p class="text-[#263238] text-xl">Ongoing Election</p>
+            <div class="flex gap-10">
+                <div class="flex flex-col justify-between">
+                    <p class="mt-8 mb-4 text-4xl font-bold">
+                        {{ election.title }}
+                        <br>
+                        <span class="text-lg font-normal">{{ election.end_date|date:"s F Y" }}</span>
+                    </p>
+                    <a href="{% url 'election_detail' pk=election.id %}"
+                        class="text-[#5478f4] hover:text-white border border-[#5478f4] hover:bg-[#5478f4] font-medium rounded-2xl text-lg py-2 px-2 text-center mb-2">
+                        <button type="button">
+                            Details
+                        </button>
+                    </a>
+                </div>
+                <img src={% static 'dashboard/vote_now.png' %} alt="Vote Now"
+                    class="h-[200px] object-cover overflow-hidden" />
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+
+    {% if top_candidates %}
+    <h2 class="text-2xl text-[#263238] mt-7 mb-10 flex items-center justify-center w-full">Top Candidates</h2>
+
+    <div
+        class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-auto xl:grid-cols-auto gap-8 px-6 pb-6 {% if top_candidates|length <= 2 %}lg:grid-cols-2 xl:grid-cols-2{% elif top_candidates|length <= 3 %}lg:grid-cols-3 xl:grid-cols-3{% else %}lg:grid-cols-4 xl:grid-cols-4{% endif %}">
+        {% for candidate in top_candidates %}
+        <div class="bg-gradient-to-b from-gray-300 flex flex-col items-center justify-between rounded-md border border-gray-400 shadow-lg bg-[#fdfdfd] p-8 max-w-[800px]"
+            style="min-width: 30rem; max-width: 40rem; justify-self: center;">
+            <img class="w-48 h-48 border-4 border-white rounded-full object-cover" src={{ candidate.image.url }}
+                alt="user photo">
+            <div class="text-center">
+                <a href="{% url 'candidate_detail' pk=candidate.pk %}">
+                    <p class="text-[#263238] text-3xl font-bold py-4">
+                        {{ candidate.name }}
+                    </p>
+                </a>
+                <a href="{% url 'election_detail' pk=candidate.election.id %}">
+                    <p class="text-[#5478f4] text-2xl font-bold">{{ candidate.election.title }}</p>
+                </a>
+                <div class="flex gap-2 justify-center p-4">
+                    <p class="text-[#263238] text-xl font-bold">{{ candidate.total_votes }}</p>
+                    <p class="text-[#263238] text-xl">votes</p>
+                </div>
+            </div>
+            <a href="{% url 'candidate_detail' pk=candidate.pk %}"
+                class="text-white border-[#5478f4] rounded-2xl text-lg py-2 px-2 text-center mb-2 w-full"
+                style="background-color: #5478f4;">
+                Details
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not ongoing_elections and not top_candidates %}
+    <div class="flex items-center justify-center h-full w-full">
+        <div>
+            <img src={% static 'dashboard/mystery_box.png' %} alt="Mystery Box">
+            <p class="text-center text-gray-500">No elections are currently running! Check back later.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock content %}

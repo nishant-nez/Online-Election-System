@@ -1,0 +1,24 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block content %}
+<div class="flex items-center justify-center my-8">
+    <div class="container p-14 rounded-lg border border-gray-500">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="container">
+                <div class="mb-6">
+                    <h3 class="text-3xl font-extrabold text-center">Add Election</h3>
+                </div>
+                {{ form|crispy }}
+                <div class="!mt-10">
+                    <button type="submit"
+                        class="w-full shadow-xl py-4 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
+                        Create Election
+                    </button>
+                </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

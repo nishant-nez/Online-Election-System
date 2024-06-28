@@ -1,0 +1,8 @@
+guide.txt
+todo.txt
+
+env/
+
+media/*/*.jpg
+media/*/*.jpeg
+media/*/*.png

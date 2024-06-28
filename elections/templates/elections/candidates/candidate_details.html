@@ -1,0 +1,135 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="w-full flex justify-end absolute p-6">
+    <div id="alert-3"
+        class="flex items-center justify-center mr-0 max-w-[50%] text-right p-4 text-green-800 rounded-lg bg-green-100"
+        role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div class="ms-3 text-sm font-medium">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="flex items-center justify-center h-full w-full">
+    <div class="container my-10 px-4">
+        <div class="bg-[#fdfdfd] shadow-lg rounded-md w-full flex flex-row md:flex-col justify-between items-center">
+            <div class="rounded-lg shadow-lg bg-gray-600 w-full flex flex-row flex-wrap p-3 antialiased" style="
+  background-image: url('https://images.unsplash.com/photo-1578836537282-3171d77f8632?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80');
+  background-repeat: no-repat;
+  background-size: cover;
+  background-blend-mode: multiply;
+">
+                <div class="md:w-1/3 w-full">
+                    <img class="rounded-lg shadow-lg antialiased" src="{{ candidate.image.url }}" alt="Profile picture">
+                </div>
+                <div class="md:w-2/3 w-full px-3 flex flex-row flex-wrap items-center justify-center">
+                    <div class="w-full text-center text-gray-700 font-semibold relative pt-3 md:pt-0">
+                        <div class="text-4xl text-white leading-tight mb-2">{{ candidate.name }}</div>
+                        <div class="text-xl text-normal text-gray-300 hover:text-gray-400 cursor-pointer">
+                            <a href="{% url 'election_detail' pk=candidate.election.id %}"
+                                class="border-t border-dashed border-gray-500 py-2">
+                                Running for: {{ candidate.election.title }}
+                            </a>
+                        </div>
+                        <div class="text-xl text-normal text-gray-300">
+                            <span class="pb-1">
+                                {{ age }} years old
+                            </span>
+                        </div>
+                    </div>
+                    {% if not voted and not request.user.is_staff %}
+                    <a href="{% url 'confirm_vote' pk=candidate.pk %}">
+                        <button type="button"
+                            class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 font-medium rounded-lg text-md px-10 py-2.5 text-center inline-flex items-center me-2 mb-2">
+                            Vote
+                        </button>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="leading-6 my-10">
+            <h4 class="text-3xl mb-3 font-medium">Biography</h4>
+            <p class="text-xl">{{ candidate.description }}</p>
+        </div>
+
+        <section class="grid gap-6 my-6 md:grid-cols-3">
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Votes Gained</dt>
+                    <dd class="text-5xl font-light md:text-6xl">{{ votes }}</dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-green-500">
+                        <span>{{ votes }} increase</span>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Rivals</dt>
+                    <dd class="text-5xl font-light md:text-6xl">{{ rivals }}</dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-green-500">
+                        <span>{{ rivals|add:1 }} Total Candidates</span>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="p-6 bg-white shadow rounded-2xl">
+                <dl class="space-y-2">
+                    <dt class="text-sm font-medium text-gray-500">Time left</dt>
+                    <dd id="countdown" class="text-5xl font-light md:text-5xl"></dd>
+                    <dd class="flex items-center space-x-1 text-sm font-medium text-red-500 pt-4">
+                        <span>Ends on {{ candidate.election.end_date|date:"d F Y" }}</span>
+                    </dd>
+                </dl>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    // Set the date we're counting down to
+    var countDownDate = new Date("{{ candidate.election.end_date|date:'M d, Y H:i:s' }}").getTime();
+    console.log("{{ candidate.election.end_date|date:'M d, Y H:i:s' }}");
+
+    // Update the count down every 1 second
+    var x = setInterval(function () {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the element with id="demo"
+        document.getElementById("countdown").innerHTML = days + " days " + hours + " hours";
+
+        // If the count down is finished, write some text
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "Election Expired";
+        }
+    }, 1000);
+</script>
+
+{% endblock content %}

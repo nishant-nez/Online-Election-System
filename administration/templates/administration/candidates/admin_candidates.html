@@ -1,0 +1,118 @@
+{% extends "dashboard/base.html" %}
+
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="w-full flex justify-end absolute p-6 z-50 mt-14">
+    <div id="alert-3"
+        class="flex items-center justify-center mr-0 max-w-[50%] text-right p-4 text-green-800 rounded-lg bg-green-100"
+        role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div class="ms-3 text-sm font-medium">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="flex items-center justify-center mt-8">
+    <div class="flex items-center justify-between container">
+        <h2 class="text-3xl font-bold">Candidates</h2>
+        <a href="{% url 'candidate_form' %}">
+            <button type="button"
+                class="w-40 shadow-xl py-3 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
+                Add Candidate
+            </button>
+        </a>
+    </div>
+</div>
+
+<div class="flex items-center justify-center">
+
+    {% if candidates %}
+    <div class="container relative overflow-x-auto shadow-md sm:rounded-lg my-10">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 shadow-lg">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Image
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Description
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        DOB
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Gender
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Election
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in candidates %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <img src="{{ candidate.image.url }}" alt="{{ candidate.title }} Avatar">
+                    </td>
+                    <td class="px-6 py-4 font-semibold">
+                        <a href="{% url 'candidate_detail' pk=candidate.id %}">
+                            {{ candidate.name }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ candidate.description }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ candidate.dob|date:"d F Y" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ candidate.gender }}
+                    </td>
+                    <td class="px-6 py-4 font-semibold">
+                        <a href="{% url 'election_detail' pk=candidate.election.id %}">
+                            {{ candidate.election.title }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'candidate_update_form' pk=candidate.id %}">
+                            <button type="button"
+                                class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-7 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                                Edit
+                            </button>
+                        </a>
+                        <a href="{% url 'confirm_candidate_delete' pk=candidate.id %}">
+                            <button type="button"
+                                class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                Delete
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center text-center h-[70vh]">No Candidates!</div>
+    {% endif %}
+
+</div>
+
+{% endblock content %}

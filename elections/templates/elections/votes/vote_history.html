@@ -1,0 +1,95 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="w-full flex justify-end absolute p-6 z-50">
+    <div id="alert-3"
+        class="flex items-center justify-center mr-0 max-w-[50%] text-right p-4 text-green-800 rounded-lg bg-green-100"
+        role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div class="ms-3 text-sm font-medium">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+<div class="flex items-center justify-center">
+
+    {% if votes %}
+    <div class="container relative overflow-x-auto shadow-md sm:rounded-lg my-10">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 shadow-lg">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Candidate
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Election
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Election Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vote in votes %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <a href="{% url 'candidate_detail' pk=vote.candidate.id %}">
+                            {{ vote.candidate.name }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'election_detail' pk=vote.election.id %}">
+                            {{ vote.election.title }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ vote.created_at|date:"d F Y" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            {% if vote.election.is_active %}
+                            <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Active
+                            {% else %}
+                            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Not Active
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'confirm_vote_delete' pk=vote.id %}"
+                            class="font-medium text-red-500 hover:underline" {% if not vote.election.is_active %}
+                            style="pointer-events: none;" {% endif %}>
+                            Delete Vote
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center text-center h-[70vh]">No Votes Submitted!</div>
+    {% endif %}
+
+</div>
+
+
+{% endblock content %}

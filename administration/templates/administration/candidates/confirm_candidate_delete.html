@@ -1,0 +1,18 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="h-[80vh] w-full flex items-center justify-center">
+    <div class="bg-white shadow-md rounded px-10 pt-8 pb-10 mb-6">
+        <form method="POST" action="{% url 'confirm_candidate_delete' pk=candidate.pk %}" class="w-full max-w-lg">
+            {% csrf_token %}
+            <p class="text-center text-xl font-semibold pb-5">Are you sure you want to delete candidate <span
+                    class="font-bold">{{ candidate.name }}</span>?</p>
+            <button type="submit"
+                class="w-full shadow-xl py-4 px-4 text-md font-semibold rounded text-white bg-red-400 hover:bg-red-500 focus:outline-none">
+                Delete
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

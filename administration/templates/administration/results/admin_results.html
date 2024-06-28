@@ -1,0 +1,131 @@
+{% extends "dashboard/base.html" %}
+
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="w-full flex justify-end absolute p-6 z-50 mt-14">
+    <div id="alert-3"
+        class="flex items-center justify-center mr-0 max-w-[50%] text-right p-4 text-green-800 rounded-lg bg-green-100"
+        role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div class="ms-3 text-sm font-medium">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="flex items-center justify-center mt-8">
+    <div class="flex items-center justify-between container">
+        <h2 class="text-3xl font-bold">Results</h2>
+    </div>
+</div>
+
+<div class="flex items-center justify-center">
+
+    {% if results %}
+    <div class="container relative overflow-x-auto shadow-md sm:rounded-lg my-10">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 shadow-lg">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        ID
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Election
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Candidate
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        No. of Votes
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        End Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        {{ result.id }}
+                    </td>
+                    <td class="px-6 py-4 font-semibold">
+                        <a href="{% url 'election_detail' pk=result.election.id %}">
+                            {{ result.election.title }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 font-semibold">
+                        <a href="{% url 'election_detail' pk=result.election.id %}">
+                            {{ result.candidate.name }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ result.votes }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ result.election.end_date|date:"d F Y, H:i" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center text-center my-10">No Results of Past Elections Yet!</div>
+    {% endif %}
+</div>
+
+<div class="flex items-center justify-center mt-8">
+    <div class="flex items-center justify-between container">
+        <h2 class="text-3xl font-bold">Pending Results</h2>
+    </div>
+</div>
+
+<div class="flex items-center justify-center">
+    {% if top_candidates %}
+    <div class="container relative overflow-x-auto my-10">
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            {% for candidate in top_candidates %}
+            <div class="bg-gradient-to-b from-gray-300 flex flex-col items-center justify-between rounded-md border border-gray-400 shadow-lg bg-[#fdfdfd] p-8 max-w-[750px]"
+                style="min-width: 30rem; max-width: 40rem; justify-self: center;">
+                <img class="w-48 h-48 border-4 border-white rounded-full object-cover" src={{ candidate.image.url }}
+                    alt="user photo">
+                <div class="text-center">
+                    <a href="{% url 'candidate_detail' pk=candidate.pk %}">
+                        <p class="text-[#263238] text-3xl font-bold py-4">
+                            {{ candidate.name }}
+                        </p>
+                    </a>
+                    <a href="{% url 'election_detail' pk=candidate.election.id %}">
+                        <p class="text-[#5478f4] text-2xl font-bold">{{ candidate.election.title }}</p>
+                    </a>
+                    <div class="flex gap-2 justify-center p-4">
+                        <p class="text-[#263238] text-xl font-bold">{{ candidate.total_votes }}</p>
+                        <p class="text-[#263238] text-xl">votes (highest)</p>
+                    </div>
+                </div>
+                <a href="{% url 'confirm_result' pk=candidate.pk %}"
+                    class="text-white border-[#5478f4] rounded-2xl text-lg py-2 px-2 text-center mb-2 w-full"
+                    style="background-color: #5478f4;">
+                    Declare Winner
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center text-center my-10">No Pending Results!</div>
+    {% endif %}
+</div>
+
+{% endblock content %}

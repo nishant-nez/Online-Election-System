@@ -1,0 +1,44 @@
+{% extends "authentication/base.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block content %}
+<!-- <div class="container"> -->
+<form method="POST">
+    {% csrf_token %}
+    <fieldset class="container">
+        <div class="mb-6">
+            <h3 class="text-3xl font-extrabold">Sign Up</h3>
+            <p class="text-sm mt-4">
+                Sign up to your account and explore a world of possibilities. Your journey begins here.
+            </p>
+        </div>
+        {{ form|crispy }}
+        <div class="!mt-10">
+            <button type="submit"
+                class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
+                Sign up
+            </button>
+        </div>
+    </fieldset>
+    <div class="border-top pt-3">
+        <p class="text-sm !mt-3 text-center">Already have an account? <a href={% url 'login' %}
+                class="text-blue-600 hover:underline ml-1 whitespace-nowrap">Sign In</a></p>
+    </div>
+</form>
+<!-- </div> -->
+
+<!-- <form method="POST">
+    {% csrf_token %}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Join Today</legend>
+        {{ form|crispy }}
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Sign Up</button>
+        </div>
+    </fieldset>
+    <p class="small mb-5 pb-lg-2"><a class="text-muted" href="#!">Forgot password?</a></p>
+    <p>Already have an account? <a href={% url 'login' %} class="link-info">Login here</a></p>
+</form> -->
+
+{% endblock content %}
